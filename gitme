@@ -16,10 +16,11 @@ gitme() {
   for base in "${DIRS[@]}"; do
     [[ -d "$base" ]] || continue
     while IFS= read -r dir; do
-      repo_name="$(basename "$dir")"
-      remote_url="$(git -C "$dir" config --get remote.origin.url 2>/dev/null || echo "")"
+      repo_lc="$(echo "$repo_name" | tr '[:upper:]' '[:lower:]')"
+      remote_lc="$(echo "$remote_url" | tr '[:upper:]' '[:lower:]')"
+      search_lc="$(echo "$SEARCH" | tr '[:upper:]' '[:lower:]')"
 
-      if [[ "$repo_name" == *"$SEARCH"* || "$remote_url" == *"$SEARCH"* ]]; then
+      if [[ "$repo_lc" == *"$search_lc"* || "$remote_lc" == *"$search_lc"* ]]; then
         matches+=("$dir")
       fi
     done < <(find "$base" -type d -name .git -exec dirname {} \;)
