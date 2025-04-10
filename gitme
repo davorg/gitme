@@ -1,0 +1,46 @@
+# ~/.gitme/gitme.sh
+
+gitme() {
+  local SEARCH="$1"
+
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: gitme <search-term>"
+    return 1
+  fi
+
+  local GITME_DIRS="${GITME_DIRS:-$HOME/git}"
+  IFS=':' read -ra DIRS <<< "$GITME_DIRS"
+
+  local matches=()
+
+  for base in "${DIRS[@]}"; do
+    [[ -d "$base" ]] || continue
+    while IFS= read -r dir; do
+      repo_name="$(basename "$dir")"
+      remote_url="$(git -C "$dir" config --get remote.origin.url 2>/dev/null || echo "")"
+
+      if [[ "$repo_name" == *"$SEARCH"* || "$remote_url" == *"$SEARCH"* ]]; then
+        matches+=("$dir")
+      fi
+    done < <(find "$base" -type d -name .git -exec dirname {} \;)
+  done
+
+  if [[ ${#matches[@]} -eq 0 ]]; then
+    echo "No matching repositories found."
+    return 1
+  elif [[ ${#matches[@]} -eq 1 ]]; then
+    echo "Found one match: ${matches[0]}"
+    cd "${matches[0]}"
+  else
+    echo "Multiple matches found:"
+    select repo in "${matches[@]}"; do
+      if [[ -n "$repo" ]]; then
+        cd "$repo"
+        break
+      else
+        echo "Invalid selection."
+      fi
+    done
+  fi
+}
+
