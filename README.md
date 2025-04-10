@@ -1,5 +1,9 @@
 # gitme
 
+![Shell](https://img.shields.io/badge/shell-bash-1f425f.svg)
+![Licence](https://img.shields.io/badge/licence-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)
+
 `gitme` is a handy Bash function that lets you quickly jump to any of your
 Git repositories by name or remote URL. It's perfect if you have dozens (or
 hundreds) of repos spread across different directories.
