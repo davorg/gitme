@@ -93,6 +93,7 @@ mkdir -p ~/.local/share/man/man1
 cp man/gitme.1.gz ~/.local/share/man/man1/
 # (Optional) Add to your shell config:
 # export MANPATH="$HOME/.local/share/man:$MANPATH"
+```
 
 ## 💡 Features
 
