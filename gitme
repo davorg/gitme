@@ -1,6 +1,42 @@
 # ~/.gitme/gitme.sh
 
 gitme() {
+  local GITME_VERSION="0.0.1"
+
+  case "$1" in
+    -h|--help)
+      cat <<EOF
+
+gitme - jump to a Git repo by name or remote URL
+
+Usage:
+  gitme <search-term>
+  gitme --help | -h
+  gitme --version | -v
+
+Searches all directories listed in \$GITME_DIRS (or \$HOME/git by default)
+and interactively jumps to matching Git repositories.
+
+Examples:
+  gitme utils
+  gitme github.com/davorg
+  gitme 127
+
+EOF
+      return 0
+      ;;
+    -v|--version)
+
+      echo "gitme version $GITME_VERSION"
+      return 0
+      ;;
+  esac
+
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: gitme <search-term>"
+    return 1
+  fi
+
   local SEARCH="$1"
 
   if [[ $# -ne 1 ]]; then
