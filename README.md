@@ -67,6 +67,29 @@ gitme github.com/davorg
 gitme my-project
 ```
 
+## 📘 Installing the man page
+
+You can read the man page directly with:
+
+```bash
+man ./man/gitme.1
+```
+
+Or install it system-wide:
+
+```bash
+sudo cp man/gitme.1.gz /usr/local/share/man/man1/
+sudo mandb
+```
+
+Alternatively, install it for just your user account:
+
+```bash
+mkdir -p ~/.local/share/man/man1
+cp man/gitme.1.gz ~/.local/share/man/man1/
+# (Optional) Add to your shell config:
+# export MANPATH="$HOME/.local/share/man:$MANPATH"
+
 ## 💡 Features
 
 - Matches both the **directory name** and the **remote.origin.url**
