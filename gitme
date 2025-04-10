@@ -39,11 +39,6 @@ EOF
 
   local SEARCH="$1"
 
-  if [[ $# -ne 1 ]]; then
-    echo "Usage: gitme <search-term>"
-    return 1
-  fi
-
   local GITME_DIRS="${GITME_DIRS:-$HOME/git}"
   IFS=':' read -ra DIRS <<< "$GITME_DIRS"
 
