@@ -1,5 +1,8 @@
 # ~/.gitme/gitme.sh
 
+GITME_CACHE_DIR="${GITME_CACHE_DIR:-$HOME/.gitme}"
+GITME_CACHE_FILE="$GITME_CACHE_DIR/cache"
+
 safe_cd() {
   local target="$1"
 
@@ -14,9 +17,26 @@ safe_cd() {
   fi
 }
 
+_gitme_build_cache() {
+  local GITME_DIRS="${GITME_DIRS:-$HOME/git}"
+  IFS=':' read -ra DIRS <<< "$GITME_DIRS"
+
+  mkdir -p "$GITME_CACHE_DIR"
+  : > "$GITME_CACHE_FILE"
+
+  for base in "${DIRS[@]}"; do
+    [[ -d "$base" ]] || continue
+    while IFS= read -r dir; do
+      remote_url="$(git -C "$dir" config --get remote.origin.url 2>/dev/null || echo "")"
+      printf '%s\t%s\n' "$dir" "$remote_url" >> "$GITME_CACHE_FILE"
+    done < <(find "$base" -type d -name .git -exec dirname {} \;)
+  done
+
+  echo "Cache rebuilt: $(wc -l < "$GITME_CACHE_FILE") repositories found."
+}
 
 gitme() {
-  local GITME_VERSION="0.0.1"
+  local GITME_VERSION="0.0.2"
 
   case "$1" in
     -h|--help)
@@ -28,9 +48,13 @@ Usage:
   gitme <search-term>
   gitme --help | -h
   gitme --version | -v
+  gitme --rebuild-cache
 
 Searches all directories listed in \$GITME_DIRS (or \$HOME/git by default)
 and interactively jumps to matching Git repositories.
+
+Options:
+  --rebuild-cache    Rebuild the repository cache for faster searching
 
 Examples:
   gitme utils
@@ -45,6 +69,10 @@ EOF
       echo "gitme version $GITME_VERSION"
       return 0
       ;;
+    --rebuild-cache)
+      _gitme_build_cache
+      return 0
+      ;;
   esac
 
   if [[ $# -ne 1 ]]; then
@@ -53,25 +81,30 @@ EOF
   fi
 
   local SEARCH="$1"
-
-  local GITME_DIRS="${GITME_DIRS:-$HOME/git}"
-  IFS=':' read -ra DIRS <<< "$GITME_DIRS"
-
   local matches=()
 
-  for base in "${DIRS[@]}"; do
-    [[ -d "$base" ]] || continue
-    while IFS= read -r dir; do
+  # Build cache if it doesn't exist
+  if [[ ! -f "$GITME_CACHE_FILE" ]]; then
+    echo "Building repository cache for the first time..."
+    _gitme_build_cache
+  fi
+
+  # Search using cache
+  if [[ -s "$GITME_CACHE_FILE" ]]; then
+    while IFS=$'\t' read -r dir remote_url; do
+      [[ -z "$dir" ]] && continue
       repo_name="$(basename "$dir")"
-      remote_url="$(git -C "$dir" config --get remote.origin.url 2>/dev/null || echo "")"
 
       shopt -s nocasematch
       if [[ "$repo_name" == *"$SEARCH"* || "$remote_url" == *"$SEARCH"* ]]; then
-        matches+=("$dir")
+        # Verify directory still exists before adding to matches
+        if [[ -d "$dir" ]]; then
+          matches+=("$dir")
+        fi
       fi
       shopt -u nocasematch
-    done < <(find "$base" -type d -name .git -exec dirname {} \;)
-  done
+    done < "$GITME_CACHE_FILE"
+  fi
 
   if [[ ${#matches[@]} -eq 0 ]]; then
     echo "No matching repositories found."
