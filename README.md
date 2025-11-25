@@ -2,7 +2,7 @@
 
 ![Shell](https://img.shields.io/badge/shell-bash-1f425f.svg)
 ![Licence](https://img.shields.io/badge/licence-MIT-green.svg)
-![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)
 
 `gitme` is a handy Bash function that lets you quickly jump to any of your
 Git repositories by name or remote URL. It's perfect if you have dozens (or
@@ -57,6 +57,12 @@ If `GITME_DIRS` is not set, it defaults to:
 $HOME/git
 ```
 
+You can also customize the cache directory by setting `GITME_CACHE_DIR`:
+
+```bash
+export GITME_CACHE_DIR="$HOME/.gitme"  # default
+```
+
 ## 🧪 Usage
 
 ```bash
@@ -69,6 +75,18 @@ Examples:
 gitme utils
 gitme github.com/davorg
 gitme my-project
+```
+
+## 🚀 Caching
+
+`gitme` uses a cache to avoid scanning directories on every invocation, making
+searches much faster. The cache is stored at `~/.gitme/cache` by default.
+
+- The cache is **automatically built** on first use
+- To **rebuild the cache** (e.g., after cloning new repos), run:
+
+```bash
+gitme --rebuild-cache
 ```
 
 ## 📘 Installing the man page
@@ -99,6 +117,7 @@ cp man/gitme.1.gz ~/.local/share/man/man1/
 
 - Matches both the **directory name** and the **remote.origin.url**
 - Works across multiple base directories
+- **Fast caching** for quick lookups
 - Bash tab-completion for easy discovery
 - Interactive selection if more than one match
 - Written as a function so it can actually `cd` into the repo
