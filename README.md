@@ -1,5 +1,6 @@
 # gitme
 
+![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github&link=https%3A%2F%2Fgithub.com%2Fdavorg%2Fgitme)
 ![Shell](https://img.shields.io/badge/shell-bash-1f425f.svg)
 ![Licence](https://img.shields.io/badge/licence-MIT-green.svg)
 ![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)
