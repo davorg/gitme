@@ -37,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Generate index.html
         uses: davorg/readme-to-index@v1
         with:
