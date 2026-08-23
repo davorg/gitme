@@ -65,6 +65,9 @@ You can also customize the cache directory by setting `GITME_CACHE_DIR`:
 export GITME_CACHE_DIR="$HOME/.gitme"  # default
 ```
 
+I like to put `gitme --rebuild-cache` in a cron job that runs overnight on
+my system.
+
 ## 🧪 Usage
 
 ```bash
